@@ -13,7 +13,7 @@ class FavoritesService {
   Future<bool> toggleFavorite(String pointId) async {
     final prefs = await SharedPreferences.getInstance();
     
-    // ✅ ВАЖНО: Создаем изменяемую копию списка, чтобы избежать ошибок UnmodifiableList
+  
     List<String> favorites = List.from(await getFavoriteIds());
     
     if (favorites.contains(pointId)) {

@@ -29,7 +29,7 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-             manifestPlaceholders["YANDEX_API_KEY"] = "bbae5e08-32ca-413f-be08-dbb00fdd64c7"
+             manifestPlaceholders["YANDEX_API_KEY"] = " yandexApiKey
     }
 
     buildTypes {

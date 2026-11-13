@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'core/constants/env.dart';
 import 'core/constants/colors.dart';
 import 'core/constants/text_styles.dart';
 import 'features/onboarding/onboarding_screen.dart';
@@ -10,8 +10,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
  await Supabase.initialize(
-  url: 'https://lmfryzdqbrrxklvasjcy.supabase.co',
-  publishableKey: 'sb_publishable_1Ggzfj5OicnvuHegyvNeSQ_czwQWKYS',
+  url:Env.supabaseUrl,
+  publishableKey:Env.supabaseAnonKey,
 );
 
   runApp(const EcoPointApp());
