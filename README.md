@@ -1,17 +1,25 @@
-# ecopoint
+# ♻️ EcoPoint — Карта пунктов приема вторсырья
 
-A new Flutter project.
+Приложение для поиска ближайших пунктов сбора вторичного сырья в Миассе и Златоусте с навигацией и отслеживанием статуса работы в реальном времени.
 
-## Getting Started
+## 🚀 Функционал
+- Интерактивная карта Яндекс.Карт с маркерами (зеленый = открыто, красный = закрыто)
+- Карточка пункта с графиком работы, типами отходов и статусом
+- Построение маршрута до пункта внутри приложения (OSRM + живое GPS-слежение)
+- Избранное с локальным сохранением (SharedPreferences)
+- Адаптивный UI под мобильные экраны
 
-This project is a starting point for a Flutter application.
+## 🛠 Технологии
+- Flutter / Dart
+- Yandex MapKit
+- Supabase (PostgreSQL + Realtime)
+- OSRM API (маршрутизация)
+- Geolocator, Shared Preferences
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## ⚙️ Как запустить
+1. Клонируйте репозиторий: `git clone https://github.com/YasminParlak/ecopoint`
+2. Скопируйте `lib/core/constants/env.example.dart` → `lib/core/constants/env.dart` и заполните ключи
+3. Выполните: 
+   ```bash
+   flutter pub get
+   flutter run
