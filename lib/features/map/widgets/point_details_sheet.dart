@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../route_screen.dart';
 import '../../../models/collection_point.dart';
-import '../../../services/favorites_service.dart'; // 👈 Добавили сервис избранного
+import '../../../services/favorites_service.dart'; 
 
 class PointDetailsSheet extends StatefulWidget {
   final CollectionPoint point;
@@ -206,7 +206,7 @@ class _PointDetailsSheetState extends State<PointDetailsSheet> {
                   ),
                 );
               },
-              icon: const Icon(Icons.directions),
+              icon: const Icon(Icons.directions, color: Colors.white),
               label: const Text("Построить маршрут"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,

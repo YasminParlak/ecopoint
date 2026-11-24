@@ -33,8 +33,8 @@ class YandexMapScreen extends StatefulWidget {
 
 class _YandexMapScreenState extends State<YandexMapScreen> {
   final SupabaseService _supabaseService = SupabaseService();
-  YandexMapController? _mapController; 
-  late final TextEditingController _searchController; 
+  YandexMapController? _mapController;
+  late final TextEditingController _searchController;
   List<CollectionPoint> _allPoints = [];
   bool _isLoading = true;
   String? _error;
@@ -62,18 +62,27 @@ class _YandexMapScreenState extends State<YandexMapScreen> {
 
   Future<void> _loadData() async {
     print('🔄 Начало загрузки данных из Supabase...');
-    setState(() { _isLoading = true; _error = null; });
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final data = await _supabaseService.getCollectionPoints();
       print('✅ Данные получены! Количество: ${data.length}');
-      setState(() { _allPoints = data; _isLoading = false; });
+      setState(() {
+        _allPoints = data;
+        _isLoading = false;
+      });
     } catch (e) {
       print('❌ ОШИБКА ЗАГРУЗКИ: $e');
-      setState(() { _error = e.toString(); _isLoading = false; });
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+      });
     }
   }
 
-  /// 🔍 Логика фильтрации
+  /// Логика фильтрации
   List<CollectionPoint> get _filteredPoints {
     return _allPoints.where((point) {
       // Поиск по названию, адресу или типу отходов
@@ -86,12 +95,13 @@ class _YandexMapScreenState extends State<YandexMapScreen> {
         }
       }
       // Фильтр по типу отходов
-      if (widget.selectedWasteType != null && widget.selectedWasteType != 'Всё') {
+      if (widget.selectedWasteType != null &&
+          widget.selectedWasteType != 'Всё') {
         if (!point.wasteTypes.contains(widget.selectedWasteType)) return false;
       }
       // Фильтр "Только открытые"
       if (widget.showOnlyOpen && !point.isOpenNow) return false;
-      
+
       return true;
     }).toList();
   }
@@ -99,7 +109,8 @@ class _YandexMapScreenState extends State<YandexMapScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator(color: Colors.orange));
+      return const Center(
+          child: CircularProgressIndicator(color: Colors.orange));
     }
 
     if (_error != null) {
@@ -113,7 +124,8 @@ class _YandexMapScreenState extends State<YandexMapScreen> {
               const SizedBox(height: 16),
               Text('Ошибка:\n$_error', textAlign: TextAlign.center),
               const SizedBox(height: 16),
-              ElevatedButton(onPressed: _loadData, child: const Text('Повторить')),
+              ElevatedButton(
+                  onPressed: _loadData, child: const Text('Повторить')),
             ],
           ),
         ),
@@ -132,13 +144,17 @@ class _YandexMapScreenState extends State<YandexMapScreen> {
           icon: PlacemarkIcon.single(
             PlacemarkIconStyle(
               image: BitmapDescriptor.fromAssetImage(
-                point.isOpenNow ? 'assets/icons/marker_green.png' : 'assets/icons/marker_red.png',
+                point.isOpenNow
+                    ? 'assets/icons/marker_green.png'
+                    : 'assets/icons/marker_red.png',
               ),
               scale: 0.3,
             ),
           ),
           onTap: (_, __) => showModalBottomSheet(
-            context: context, isScrollControlled: true, backgroundColor: Colors.transparent,
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
             builder: (_) => PointDetailsSheet(point: point),
           ),
         ),
@@ -165,7 +181,8 @@ class _YandexMapScreenState extends State<YandexMapScreen> {
           child: YandexMap(
             mapType: MapType.map,
             onMapCreated: (controller) {
-              print('✅✅✅ КАРТА СОЗДАНА! Размер: ${MediaQuery.of(context).size}');
+              print(
+                  '✅✅✅ КАРТА СОЗДАНА! Размер: ${MediaQuery.of(context).size}');
               _mapController = controller;
               if (_allPoints.isNotEmpty) {
                 double sumLat = 0, sumLon = 0;
@@ -229,7 +246,8 @@ class _YandexMapScreenState extends State<YandexMapScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.search, color: AppColors.textSecondary),
+                        const Icon(Icons.search,
+                            color: AppColors.textSecondary),
                         const SizedBox(width: 12),
                         Expanded(
                           child: TextField(
@@ -259,7 +277,8 @@ class _YandexMapScreenState extends State<YandexMapScreen> {
                             constraints: const BoxConstraints(),
                           )
                         else
-                          const Icon(Icons.tune, color: AppColors.textSecondary),
+                          const Icon(Icons.tune,
+                              color: AppColors.textSecondary),
                       ],
                     ),
                   ),
@@ -277,8 +296,19 @@ class _YandexMapScreenState extends State<YandexMapScreen> {
                         return Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: WasteTypeChip(
-                            label: '🟢 Открыто',
-                            icon: Icons.access_time,
+                            label: 'Открыто', // ← убрали эмодзи 🟢 из текста
+                            icon: Icons.access_time, // ← на случай fallback
+                            customIcon: const Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 11,
+                                  backgroundColor: Color(0xFF4CAF50),
+                                ),
+                                Icon(Icons.access_time,
+                                    size: 13, color: Colors.white),
+                              ],
+                            ),
                             isSelected: widget.showOnlyOpen,
                             onTap: widget.onToggleOpen,
                           ),

@@ -329,7 +329,7 @@ class _RouteScreenState extends State<RouteScreen> {
     final lonDiff = maxLon - minLon;
     final maxDiff = latDiff > lonDiff ? latDiff : lonDiff;
 
-    // ✅ Увеличил минимальный зум до 10 (чтобы не показывать весь мир)
+    // минимальный зум до 10 (чтобы не показывать весь мир)
     double zoom;
     if (maxDiff < 0.01) {
       zoom = 15;

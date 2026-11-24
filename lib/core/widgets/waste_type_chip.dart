@@ -6,6 +6,7 @@ import '../constants/text_styles.dart';
 class WasteTypeChip extends StatelessWidget {
   final String label;
   final IconData icon;
+  final Widget? customIcon;
   final bool isSelected;
   final VoidCallback? onTap;
 
@@ -13,6 +14,7 @@ class WasteTypeChip extends StatelessWidget {
     super.key,
     required this.label,
     required this.icon,
+    this.customIcon, 
     this.isSelected = false,
     this.onTap,
   });
@@ -35,7 +37,7 @@ class WasteTypeChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            customIcon ?? Icon(
               icon,
               size: 16,
               color: isSelected ? Colors.white : AppColors.textSecondary,

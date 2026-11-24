@@ -22,7 +22,7 @@ class GuideScreen extends StatelessWidget {
       'color': Color(0xFF4CAF50), // Зелёный
     },
     {
-      'icon': '',
+      'icon': '📰',
       'title': AppStrings.wastePaper,
       'subtitle': 'Картон, газеты, журналы',
       'color': Color(0xFF2196F3), // Синий
@@ -46,7 +46,7 @@ class GuideScreen extends StatelessWidget {
       'color': Color(0xFF9C27B0), // Фиолетовый
     },
     {
-      'icon': '',
+      'icon': '📱',
       'title': AppStrings.wasteElectronics,
       'subtitle': 'Телефоны, провода',
       'color': Color(0xFF607D8B), // Голубой
@@ -73,38 +73,6 @@ class GuideScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Поисковая строка
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Container(
-              height: 50,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.search, color: AppColors.textSecondary),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'Что куда сдавать?',
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
           // Список категорий
           Expanded(
             child: ListView.builder(
@@ -121,7 +89,8 @@ class GuideScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryCard(BuildContext context, Map<String, dynamic> category) {
+  Widget _buildCategoryCard(
+      BuildContext context, Map<String, dynamic> category) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
