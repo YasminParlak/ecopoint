@@ -1,14 +1,24 @@
 plugins {
     id("com.android.application")
+    id("kotlin-android") 
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+ import java.util.Properties
+   import java.io.FileInputStream
 
+   val localProperties = Properties()
+   val localPropertiesFile = rootProject.file("local.properties")
+   if (localPropertiesFile.exists()) {
+       localProperties.load(FileInputStream(localPropertiesFile))
+   }
+   val yandexApiKey = localProperties.getProperty("yandexApiKey", "")
 android {
+    
     
     namespace = "com.example.ecopoint"
     compileSdk = 36
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -29,7 +39,7 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-             manifestPlaceholders["YANDEX_API_KEY"] = " yandexApiKey
+        manifestPlaceholders["YANDEX_MAPS_API_KEY"] = yandexApiKey
     }
 
     buildTypes {
@@ -51,5 +61,5 @@ flutter {
     source = "../.."
 }
 dependencies {
-    implementation("com.yandex.android:maps.mobile:4.39.1-lite")
+    implementation("com.yandex.android:maps.mobile:4.6.1-lite")
 }
