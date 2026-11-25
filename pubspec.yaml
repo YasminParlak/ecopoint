@@ -13,15 +13,16 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.1.0
   geolocator: ^10.1.0
-  supabase_flutter: ^2.8.0  # Совместимая версия для Dart 3.6
+  supabase_flutter: ^2.8.0  
   url_launcher: ^6.3.0
-  shared_preferences: ^2.2.0 # Совместимая версия для Dart 3.6
-  http: ^1.2.0               # Совместимая версия для Dart 3.6
+  shared_preferences: ^2.2.0 
+  http: ^1.2.0               
   yandex_mapkit: 4.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^4.0.0      # ✅ ИСПРАВЛЕНО: Версия 4.x поддерживает Dart 3.5-3.6
 
 flutter:
@@ -31,3 +32,8 @@ flutter:
     - assets/icons/marker_green.png
     - assets/icons/marker_red.png   
     - assets/icons/user_marker.png 
+flutter_launcher_icons:
+  android: true
+  ios: false # пока делаем только для Android
+  image_path: "assets/icons/app_icon.png"
+  min_sdk_android: 21 # минимальная версия Android

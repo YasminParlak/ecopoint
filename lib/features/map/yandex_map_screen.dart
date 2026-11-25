@@ -296,8 +296,8 @@ class _YandexMapScreenState extends State<YandexMapScreen> {
                         return Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: WasteTypeChip(
-                            label: 'Открыто', // ← убрали эмодзи 🟢 из текста
-                            icon: Icons.access_time, // ← на случай fallback
+                            label: 'Открыто', // 
+                            icon: Icons.access_time, 
                             customIcon: const Stack(
                               alignment: Alignment.center,
                               children: [

@@ -35,9 +35,38 @@ class _RouteScreenState extends State<RouteScreen> {
     _buildSmartRoute();
   }
 
+  Future<bool> _ensureLocationPermission() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      if (mounted) {
+        setState(() {
+          _error = 'Включите геолокацию (GPS) в настройках телефона';
+          _isLoading = false;
+        });
+      }
+      return false;
+    }
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      if (mounted) {
+        setState(() {
+          _error =
+              'Нет доступа к геолокации. Разрешите его в настройках приложения';
+          _isLoading = false;
+        });
+      }
+      return false;
+    }
+    return true;
+  }
+
   @override
   void dispose() {
-    // ✅ Обязательно отписываемся при уходе с экрана
     _positionStream?.cancel();
     super.dispose();
   }
@@ -49,11 +78,11 @@ class _RouteScreenState extends State<RouteScreen> {
 
     // Слушаем обновления позиции каждые 5 метров или 5 секунд
     _positionStream = Geolocator.getPositionStream(
-    locationSettings: AndroidSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 5,
-      intervalDuration: const Duration(seconds: 5),
-    ),
+      locationSettings: AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 5,
+        intervalDuration: const Duration(seconds: 5),
+      ),
     ).listen((Position position) {
       _onUserPositionChanged(position);
     });
@@ -105,7 +134,8 @@ class _RouteScreenState extends State<RouteScreen> {
           ),
           icon: PlacemarkIcon.single(
             PlacemarkIconStyle(
-              image: BitmapDescriptor.fromAssetImage('assets/icons/user_marker.png'),
+              image: BitmapDescriptor.fromAssetImage(
+                  'assets/icons/user_marker.png'),
               scale: 0.4,
             ),
           ),
@@ -150,7 +180,8 @@ class _RouteScreenState extends State<RouteScreen> {
         final data = json.decode(response.body);
 
         if (data['code'] == 'Ok' && data['routes'].isNotEmpty) {
-          final coordinates = data['routes'][0]['geometry']['coordinates'] as List;
+          final coordinates =
+              data['routes'][0]['geometry']['coordinates'] as List;
 
           final routePoints = coordinates.map<Point>((coord) {
             final list = coord as List;
@@ -188,8 +219,12 @@ class _RouteScreenState extends State<RouteScreen> {
         PolylineMapObject(
           mapId: const MapObjectId('route_line'),
           polyline: Polyline(points: [
-            Point(latitude: _userPosition!.latitude, longitude: _userPosition!.longitude),
-            Point(latitude: widget.point.latitude, longitude: widget.point.longitude),
+            Point(
+                latitude: _userPosition!.latitude,
+                longitude: _userPosition!.longitude),
+            Point(
+                latitude: widget.point.latitude,
+                longitude: widget.point.longitude),
           ]),
           strokeColor: Colors.green,
           strokeWidth: 6.0,
@@ -201,6 +236,8 @@ class _RouteScreenState extends State<RouteScreen> {
   /// Первоначальная загрузка маршрута
   Future<void> _buildSmartRoute() async {
     try {
+      final hasPermission = await _ensureLocationPermission();
+      if (!hasPermission) return;
       _userPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
@@ -216,13 +253,15 @@ class _RouteScreenState extends State<RouteScreen> {
       bool osrmWorked = false;
 
       try {
-        final response = await http.get(url).timeout(const Duration(seconds: 10));
+        final response =
+            await http.get(url).timeout(const Duration(seconds: 10));
 
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
 
           if (data['code'] == 'Ok' && data['routes'].isNotEmpty) {
-            final coordinates = data['routes'][0]['geometry']['coordinates'] as List;
+            final coordinates =
+                data['routes'][0]['geometry']['coordinates'] as List;
 
             routePoints = coordinates.map<Point>((coord) {
               final list = coord as List;
@@ -241,8 +280,12 @@ class _RouteScreenState extends State<RouteScreen> {
 
       if (!osrmWorked || routePoints.isEmpty) {
         routePoints = [
-          Point(latitude: _userPosition!.latitude, longitude: _userPosition!.longitude),
-          Point(latitude: widget.point.latitude, longitude: widget.point.longitude),
+          Point(
+              latitude: _userPosition!.latitude,
+              longitude: _userPosition!.longitude),
+          Point(
+              latitude: widget.point.latitude,
+              longitude: widget.point.longitude),
         ];
       }
 
@@ -259,7 +302,9 @@ class _RouteScreenState extends State<RouteScreen> {
           // Маркер назначения (цвет зависит от статуса)
           PlacemarkMapObject(
             mapId: const MapObjectId('destination_marker'),
-            point: Point(latitude: widget.point.latitude, longitude: widget.point.longitude),
+            point: Point(
+                latitude: widget.point.latitude,
+                longitude: widget.point.longitude),
             icon: PlacemarkIcon.single(
               PlacemarkIconStyle(
                 image: BitmapDescriptor.fromAssetImage(
@@ -281,7 +326,8 @@ class _RouteScreenState extends State<RouteScreen> {
             ),
             icon: PlacemarkIcon.single(
               PlacemarkIconStyle(
-                image: BitmapDescriptor.fromAssetImage('assets/icons/user_marker.png'),
+                image: BitmapDescriptor.fromAssetImage(
+                    'assets/icons/user_marker.png'),
                 scale: 0.4,
               ),
             ),
@@ -342,7 +388,7 @@ class _RouteScreenState extends State<RouteScreen> {
     } else if (maxDiff < 0.5) {
       zoom = 10;
     } else {
-      zoom = 10; 
+      zoom = 10;
     }
 
     _mapController!.moveCamera(
@@ -376,7 +422,8 @@ class _RouteScreenState extends State<RouteScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                        const Icon(Icons.error_outline,
+                            size: 48, color: Colors.red),
                         const SizedBox(height: 16),
                         Text(_error!, textAlign: TextAlign.center),
                         const SizedBox(height: 16),
@@ -395,8 +442,11 @@ class _RouteScreenState extends State<RouteScreen> {
                         _mapController = controller;
                         // ✅ Если данные уже загружены — центрируем сразу
                         if (_userPosition != null && _mapObjects.isNotEmpty) {
-                          final routeLine = _mapObjects.whereType<PolylineMapObject>().firstOrNull;
-                          if (routeLine != null && routeLine.polyline.points.isNotEmpty) {
+                          final routeLine = _mapObjects
+                              .whereType<PolylineMapObject>()
+                              .firstOrNull;
+                          if (routeLine != null &&
+                              routeLine.polyline.points.isNotEmpty) {
                             _fitCameraToRoute(routeLine.polyline.points);
                           }
                         }
@@ -422,11 +472,13 @@ class _RouteScreenState extends State<RouteScreen> {
                                   zoom: 16,
                                 ),
                               ),
-                              animation: const MapAnimation(type: MapAnimationType.smooth, duration: 0.5),
+                              animation: const MapAnimation(
+                                  type: MapAnimationType.smooth, duration: 0.5),
                             );
                           }
                         },
-                        child: const Icon(Icons.my_location, color: Colors.green),
+                        child:
+                            const Icon(Icons.my_location, color: Colors.green),
                       ),
                     ),
 
@@ -439,7 +491,8 @@ class _RouteScreenState extends State<RouteScreen> {
                         padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(24)),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.1),
@@ -466,16 +519,23 @@ class _RouteScreenState extends State<RouteScreen> {
                                 ),
                                 const SizedBox(width: 8),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: (widget.point.isOpenNow ? Colors.green : Colors.red)
+                                    color: (widget.point.isOpenNow
+                                            ? Colors.green
+                                            : Colors.red)
                                         .withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
-                                    widget.point.isOpenNow ? "ОТКРЫТО" : "ЗАКРЫТО",
+                                    widget.point.isOpenNow
+                                        ? "ОТКРЫТО"
+                                        : "ЗАКРЫТО",
                                     style: TextStyle(
-                                      color: widget.point.isOpenNow ? Colors.green : Colors.red,
+                                      color: widget.point.isOpenNow
+                                          ? Colors.green
+                                          : Colors.red,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 11,
                                     ),
@@ -486,7 +546,8 @@ class _RouteScreenState extends State<RouteScreen> {
                             const SizedBox(height: 4),
                             Text(
                               widget.point.address,
-                              style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                              style: TextStyle(
+                                  color: Colors.grey[700], fontSize: 14),
                             ),
                             const SizedBox(height: 16),
                             SizedBox(
@@ -494,7 +555,10 @@ class _RouteScreenState extends State<RouteScreen> {
                               height: 48,
                               child: ElevatedButton.icon(
                                 onPressed: () => Navigator.pop(context),
-                                icon: const Icon(Icons.arrow_back),
+                                icon: const Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                ),
                                 label: const Text('Вернуться к карте'),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.green,
